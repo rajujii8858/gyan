@@ -1,0 +1,274 @@
+  <!DOCTYPE html>
+<html lang="hi">
+<head>
+<style>
+   
+    #aknam {
+     max-width: 90%;
+     height: auto;
+    }
+    #satnam{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300;
+    }
+
+    #aknam:hover {
+      transform: scale(1.1);
+      border-color: blue;
+    }
+  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>सिख धर्म का इतिहास क्विज़</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background: #003366;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .tab-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .tab-button {
+      padding: 10px 15px;
+      margin: 5px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .tab-button:hover { background: #0056b3; }
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .question { font-size: 1.2rem; margin-bottom: 15px; }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .options button:hover { background: #ddd; }
+    .correct { background-color: #c8e6c9 !important; }
+    .wrong { background-color: #ffcdd2 !important; }
+    #scoreBoard {
+      text-align: center;
+      display: none;
+      padding: 20px;
+      font-size: 1.2rem;
+    }
+    .nav-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .nav-btns button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #007BFF;
+      color: white;
+    }
+    @media screen and (max-width: 600px) {
+      .quiz-container { margin: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>सिख धर्म का इतिहास</header>
+  <div class="tab-container" id="tabContainer"></div>
+  <div class="quiz-container" id="quizContainer">
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+    <div class="nav-btns">
+      <button id="backBtn">Back</button>
+      <button id="nextBtn">Next</button>
+    </div>
+  </div>
+  <div id="scoreBoard"></div>
+
+  <audio id="correctSound" src="Right sound.mp3"></audio>
+  <audio id="wrongSound" src="worng sound.mp3"></audio>
+ 
+
+  <script>
+    const allQuestions = [
+      { q: "गुरु ग्रंथ साहिब किस लिपि में लिखी गई है?", options: ["गुरुमुखी लिपि", "ब्राह्मी लिपि", "देवनागरी लिपि", "इनमें से कोई नहीं"], answer: 0 },
+      { q: "सिखों का पवित्र ग्रंथ कौन सा है?", options: ["दशमी ग्रंथ", "सिख ग्रंथ", "वेद ग्रंथ", "गुरु ग्रंथ साहिब"], answer: 3 },
+      { q: "सिख धर्म के धार्मिक स्थल को क्या कहा जाता है?", options: ["मस्जिद", "गुरुद्वारा", "चर्च", "मंदिर"], answer: 1 },
+      { q: "सिख धर्म की स्थापना किस शताब्दी में हुई थी?", options: ["14वीं शताब्दी", "15वीं शताब्दी", "16वीं शताब्दी", "17वीं शताब्दी"], answer: 1 },
+      { q: "सिख धर्म के संस्थापक किसे माना जाता हैं?", options: ["गुरु अमर दास", "गुरु अर्जुन देव", "गुरु नानक देव", "गुरु गोविंद सिंह"], answer: 2 },
+      { q: "गुरु नानक देव का जन्म कहां हुआ था?", options: ["ननकाना साहिब", "अमृतसर", "पटना", "दिल्ली"], answer: 0 },
+      { q: "गुरु गोविंद सिंह ने खालसा पंथ की स्थापना कब की थी?", options: ["1699", "1708", "1675", "1685"], answer: 0 },
+      { q: "गुरु अर्जुन देव किस सिख गुरु के रूप में जाने जाते हैं?", options: ["पंचम गुरु", "तृतीय गुरु", "चतुर्थ गुरु", "द्वितीय गुरु"], answer: 0 },
+      { q: "सिख धर्म में कितने गुरु हुए हैं?", options: ["8", "9", "10", "11"], answer: 2 },
+      { q: "सिख धर्म का मुख्य सिद्धांत क्या है?", options: ["एकेश्वरवाद", "बहुदेववाद", "नास्तिकता", "कर्म सिद्धांत"], answer: 0 },
+      // 25 और सवाल नीचे जोड़ सकते हैं इसी प्रारूप में
+      { q: "सिख धर्म के संस्थापक किसे माना जाता हैं?", options: ['गुरु अमर दास', 'गुरु अर्जुन देव', 'गुरु नानक देव', 'गुरु गोविंद सिंह'], answer: 2 },
+      { q: "सिख धर्म की स्थापना किस शताब्दी में हुई थी?", options: ['14वीं शताब्दी', '15वीं शताब्दी', '16वीं शताब्दी', '17वीं शताब्दी'], answer: 1 },
+      { q: "सिख धर्म के धार्मिक स्थल को क्या कहा जाता है?", options: ['मस्जिद', 'गुरुद्वारा', 'चर्च', 'मंदिर'], answer: 1 },
+      { q: "सिखों का पवित्र ग्रंथ कौन सा है?", options: ['दशमी ग्रंथ', 'सिख ग्रंथ', 'वेद ग्रंथ', 'गुरु ग्रंथ साहिब'], answer: 3 },
+      { q: "गुरु ग्रंथ साहिब किस लिपि में लिखी गई है?", options: ['गुरुमुखी लिपि', 'ब्राह्मी लिपि', 'देवनागरी लिपि', 'इनमें से कोई नहीं'], answer: 0 },
+      { q: "किस सिख गुरु ने गुरुमुखी लिपि आरंभ किया था?", options: ['गुरु रामदास ने', 'गुरु अंगद ने', 'गुरु हरगोविंद ने', 'गुरु अर्जुन देव ने'], answer: 1 },
+      { q: "गुरु ग्रंथ साहिब को और किस नाम से भी जाना जाता है?", options: ['पुराण ग्रंथ', 'वेद ग्रंथ', 'इतिहास ग्रंथ', 'आदि ग्रंथ'], answer: 3 },
+      { q: "सिख धर्म के प्रवर्तक कौन हैं?", options: ['गुरु हरी कृष्ण', 'गुरु नानक देव', 'गुरु अंगद देव', 'गुरु अजीत सिंह'], answer: 1 },
+      { q: "सिखों के कितने गुरु थे?", options: ['8 गुरु', '10 गुरु', '12 गुरु', '15 गुरु'], answer: 1 },
+      { q: "सिखों के पहले गुरु का नाम क्या था?", options: ['गुरु अमर दास', 'गुरु रामदास', 'गुरु हर राय', 'गुरु नानक देव'], answer: 3 },
+      { q: "गुरु नानक देव का जन्म कब हुआ था?", options: ['18 मार्च 1465', '15 अप्रैल 1469', '26 मई 1470', '1 जनवरी 1472'], answer: 1 },
+      { q: "गुरु नानक देव का जन्म कहां हुआ था?", options: ['तलवंडी', 'पटियाला', 'जयपुर', 'अमृतसर'], answer: 0 },
+      { q: "लंगर व्यवस्था किस सिख गुरु ने स्थापित किया था?", options: ['गुरु नानक देव', 'गुरु अंगद देव', 'गुरु तेग बहादुर', 'गुरु तुलसीदास'], answer: 0 },
+      { q: "गुरु नानक देव की मृत्यु कब हुई?", options: ['18 अगस्त 1540', '19 जून 1535', '15 मार्च 1560', '22 सितंबर 1539'], answer: 3 },
+      { q: "सिखों के दूसरे गुरु कौन थे?", options: ['गुरु हरगोविंद', 'गुरु अंगद देव', 'गुरु तेग बहादुर', 'गुरु तुलसीदास'], answer: 1 },
+      { q: "गुरु अंगद देव जी का असली नाम क्या था?", options: ['लहणा', 'हरगोविंद', 'अर्जुन', 'तेग बहादुर'], answer: 0 },
+      { q: "सिखों के तीसरे गुरु कौन थे?", options: ['गुरु अर्जुन देव', 'गुरु रामदास', 'गुरु अमरदास', 'गुरु नानक'], answer: 2 },
+      { q: "अमृतसर नगर की स्थापना किसने की?", options: ['गुरु अर्जुन देव', 'गुरु रामदास', 'गुरु हरगोविंद', 'गुरु अंगद'], answer: 1 },
+      { q: "स्वर्ण मंदिर (हरमंदिर साहिब) का निर्माण किसने करवाया?", options: ['गुरु रामदास', 'गुरु अर्जुन देव', 'गुरु हर राय', 'गुरु हरगोविंद'], answer: 1 },
+      { q: "गुरु अर्जुन देव को किस मुगल शासक ने मरवाया?", options: ['अकबर', 'जहाँगीर', 'औरंगज़ेब', 'शाहजहाँ'], answer: 1 },
+      { q: "सिखों के छठे गुरु कौन थे?", options: ['गुरु हर राय', 'गुरु हरकृष्ण', 'गुरु हरगोविंद', 'गुरु रामदास'], answer: 2 },
+      { q: "सिखों ने पहली बार हथियार किस गुरु के समय में उठाए?", options: ['गुरु हरगोविंद', 'गुरु नानक', 'गुरु अमरदास', 'गुरु अंगद'], answer: 0 },
+      { q: "गुरु हर राय किसके पुत्र थे?", options: ['गुरु अर्जुन देव', 'गुरु रामदास', 'गुरु हरगोविंद', 'गुरु हरकृष्ण'], answer: 2 },
+      { q: "सिखों के आठवें गुरु कौन थे?", options: ['गुरु हर राय', 'गुरु हरकृष्ण', 'गुरु तेग बहादुर', 'गुरु गोबिंद सिंह'], answer: 1 },
+      { q: "सबसे कम उम्र में गुरु बनने वाले सिख गुरु कौन थे?", options: ['गुरु हरकृष्ण', 'गुरु तेग बहादुर', 'गुरु नानक', 'गुरु अंगद'], answer: 0 },
+      { q: "गुरु तेग बहादुर को किसने मर वाया था?", options: ['अकबर', 'शाहजहाँ', 'औरंगज़ेब', 'जहाँगीर'], answer: 2 },
+      { q: "सिखों के अंतिम और दसवें गुरु कौन थे?", options: ['गुरु तेग बहादुर', 'गुरु हर राय', 'गुरु गोबिंद सिंह', 'गुरु हरकृष्ण'], answer: 2 },
+      { q: "खालसा पंथ की स्थापना कब हुई थी?", options: ['1699', '1705', '1605', '1710'], answer: 0 },
+      { q: "खालसा पंथ की स्थापना कहाँ हुई थी?", options: ['पटियाला', 'आनंदपुर साहिब', 'अमृतसर', 'दिल्ली'], answer: 1 },
+      { q: "‘पंच प्यारे’ की अवधारणा किसने दी?", options: ['गुरु नानक', 'गुरु अंगद', 'गुरु गोबिंद सिंह', 'गुरु अर्जुन देव'], answer: 2 },
+      { q: "पंच प्यारे में से कौन सबसे पहले सामने आए थे?", options: ['दया सिंह', 'धर्म सिंह', 'साहिब सिंह', 'मोही सिंह'], answer: 0 },
+      { q: "गुरु गोबिंद सिंह ने किसे अंतिम गुरु घोषित किया?", options: ['गुरु नानक', 'गुरु ग्रंथ साहिब', 'गुरु हरकृष्ण', 'खालसा'], answer: 1 },
+      { q: "सिख धर्म में '5 ककार' किससे जुड़े हैं?", options: ['गुरु नानक', 'गुरु अर्जुन देव', 'गुरु गोबिंद सिंह', 'गुरु तेग बहादुर'], answer: 2 },
+      { q: "‘वाहे गुरु जी का खालसा, वाहे गुरु जी की फतेह’ किसने दिया?", options: ['गुरु नानक', 'गुरु गोबिंद सिंह', 'गुरु हर राय', 'गुरु अर्जुन देव'], answer: 1 },
+      { q: "सिख धर्म में किसे 'सजधज के रहना' कहा जाता है?", options: ['किरपान पहनना', 'पगड़ी पहनना', 'शस्त्र धारण करना', 'सिर मुंडवाना'], answer: 0 },
+
+
+    ];
+
+    let currentSet = 0;
+    let currentQuestionIndex = 0;
+    const questionsPerSet = 5;
+    const totalSets = Math.ceil(allQuestions.length / questionsPerSet);
+    let score = 0;
+
+    const tabContainer = document.getElementById("tabContainer");
+    const quizContainer = document.getElementById("quizContainer");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const scoreBoard = document.getElementById("scoreBoard");
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+
+    for (let i = 0; i < totalSets; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = `Set ${i + 1}`;
+      btn.className = "tab-button";
+      btn.onclick = () => startSet(i);
+      tabContainer.appendChild(btn);
+    }
+
+    function startSet(setIndex) {
+      currentSet = setIndex;
+      currentQuestionIndex = 0;
+      score = 0;
+      tabContainer.style.display = "none";
+      scoreBoard.style.display = "none";
+      quizContainer.style.display = "block";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const index = currentSet * questionsPerSet + currentQuestionIndex;
+      const q = allQuestions[index];
+      if (!q) return;
+
+      questionEl.textContent = `${currentQuestionIndex + 1}. ${q.q}`;
+      optionsEl.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i, btn);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, btn) {
+      const index = currentSet * questionsPerSet + currentQuestionIndex;
+      const q = allQuestions[index];
+      const buttons = optionsEl.querySelectorAll("button");
+
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.answer) b.classList.add("correct");
+      });
+
+      if (selected === q.answer) {
+        btn.classList.add("correct");
+        correctSound.play();
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        wrongSound.play();
+      }
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questionsPerSet) {
+        showQuestion();
+      } else {
+        quizContainer.style.display = "none";
+        scoreBoard.style.display = "block";
+        scoreBoard.innerHTML = `✅ Set ${currentSet + 1} समाप्त | स्कोर: ${score}/${questionsPerSet}<br><br>`;
+        if (currentSet + 1 < totalSets) {
+          const nextSetBtn = document.createElement("button");
+          nextSetBtn.textContent = "Next Set";
+          nextSetBtn.onclick = () => startSet(currentSet + 1);
+          scoreBoard.appendChild(nextSetBtn);
+        }
+        const homeBtn = document.createElement("button");
+        homeBtn.textContent = "Home";
+        homeBtn.onclick = () => location.reload();
+        scoreBoard.appendChild(homeBtn);
+      }
+    };
+
+    backBtn.onclick = () => {
+      quizContainer.style.display = "none";
+      scoreBoard.style.display = "none";
+      tabContainer.style.display = "flex";
+    };
+  </script>
+  <div id="satnam">
+     <img id="aknam" src="https://m.media-amazon.com/images/I/81nh9m4zB8L.jpg" alt="ੴ" height="400" width="200">
+    </div>
+</body>
+</html>
