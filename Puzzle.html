@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stylish Puzzle Game (Horizontal Select)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">इमेज पज़ल गेम</h1>
+    
+    <!-- Horizontal row: modeSelect और imgSelect एक साथ -->
+    <div class="select-row">
+      <div>
+        <label for="modeSelect">मोड चुनें:</label><br />
+        <select id="modeSelect" onchange="setMode()">
+          <option value="3">Easy (3x3)</option>
+          <option value="4" selected>Normal (4x4)</option>
+          <option value="5">Hard (5x5)</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="imgSelect">इमेज चुनें:</label><br />
+        <select id="imgSelect" onchange="changeImage()">
+          <option value="https://images.squarespace-cdn.com/content/v1/5caaad10e5f7d161a45a641b/1585772040760-7IRK0I6J66DJHNMU3G05/Hanuman.jpg">Image 1</option>
+          <option value="https://www.tallengestore.com/cdn/shop/products/Hanuman_And_Sriram_3fe96b74-566d-4548-8f48-423d7adcb30b.jpg?v=1569997122.JPG">Image 2</option>
+          <option value="https://sakhashree.com/wp-content/uploads/2023/04/significance-of-hanuman-29.jpg">Image 3</option>
+          <option value="IMAGE4_LINK">Image 4</option>
+          <option value="IMAGE5_LINK">Image 5</option>
+          <option value="IMAGE6_LINK">Image 6</option>
+          <option value="IMAGE7_LINK">Image 7</option>
+          <option value="IMAGE8_LINK">Image 8</option>
+          <option value="IMAGE9_LINK">Image 9</option>
+          <option value="IMAGE10_LINK">Image 10</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <span id="moves">चालें: 0</span>
+      <span id="timer">समय: 0s</span>
+    </div>
+
+    <div id="puzzle-container"></div>
+
+    <div class="btn-row">
+      <button onclick="resetGame()">रीसेट</button>
+      <button id="solveBtn">हल दिखाएँ</button>
+      <button onclick="startGame()">फिर से शुरू करें</button>
+    </div>
+
+    <!-- मूवमेंट और विन साउंड (आप लिंक नीचे कमेंट में डालें) -->
+    <audio id="moveSound" src=""></audio>
+    <audio id="winSound" src=""></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+<!--
+-- IMAGE LINKS (index.html की select में भरें):
+IMAGE1_LINK: यहाँ अपनी image 1 की url डालें
+IMAGE2_LINK: image 2 की url
+IMAGE3_LINK: ...
+...
+IMAGE10_LINK: image 10 की url
+
+-- Sound links (script.js के soundMap में भरें):
+MOVE_SOUND_1_LINK, WIN_SOUND_1_LINK --- image 1 के लिए
+MOVE_SOUND_2_LINK, WIN_SOUND_2_LINK --- image 2 के लिए
+...
+DEFAULT_MOVE_SOUND_LINK, DEFAULT_WIN_SOUND_LINK -- डिफॉल्ट साउंड
+-->
